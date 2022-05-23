@@ -1,0 +1,1 @@
+curl --user newtest@email.com:secret -X POST -H "Content-Type: application/json" -d '{"title":"The Java Logo", "text":"What is depicted on the Java logo?", "options": ["Robot", "Tea leaf", "Cup of coffee", "Bug"], "answer": [2]}' "https://irene.informatik.htw-dresden.de:8888/api/quizzes"
