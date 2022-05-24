@@ -3,9 +3,12 @@
 Diese sollten dann angezeigt werden. (Indizes zu den jeweiligen Aufgaben in seperatem Array abspeichern damit darauf dann später die Aufgaben angezeigt werden können.)
  */
 
+// Global variables
 window.addEventListener("load", start, false);
 var xhr = getXhr();
 const url = "https://irene.informatik.htw-dresden.de:8888/api/quizzes/";
+const username = "newtest@email.com";
+const password = "secret";
 
 function getXhr() {
   // API für asynchrone Aufrufe
@@ -28,15 +31,16 @@ function sendXhr(method, urlExt, data = null) {
   xhr.open(method, urlDest);
   xhr.setRequestHeader("Content-Type", "application/json");
   // nice to have: hier evtl noch variable und Funktion, dass man pwd im Klartext eingeben kann und dann convertiert
-  xhr.setRequestHeader("Authorization", "Basic dGVzdEBnbWFpbC5jb206c2VjcmV0");
+  xhr.setRequestHeader("Authorization", "Basic " + window.btoa(username + ":" + password));
   xhr.send(data);
+  // https://reqbin.com/req/javascript/c-wyuctivp/convert-curl-to-javascript
 }
 
 function xhrHandler() {
   new Promise((resolve) => {
     if (xhr.readyState == 4 && xhr.status == 200) {
       data = JSON.parse(xhr.responseText);
-      // console.log(data);
+      console.log(data);
       resolve(data);
     }
   });
@@ -52,7 +56,7 @@ array title = ["Mathe", "Akorde"];
 array AufgabetoTitel [[1, 2, 3], [4,5,6]]
 // Mathe ist mit Index 0 -> ziehe die Werte aus AufgabetoTitel mit Index 0 analog die anderen
    */
-  let choices2 = getChoices();
+  // let choices2 = getChoices();
   var choices = ["Mathe", "Akorde"];
   // console.log(choices);
   for (let i in choices) {
@@ -74,29 +78,14 @@ function getChoices() {
   });
   console.log("nach dem senden");
   console.log(data);
-  console.log(data.title);
+  // console.log(data.title);
 
   // let result = Array.from(new Set(data.title));
   return;
 }
 
-/* function chooseTopic(event) {
-  var targetElement = event.target || event.srcElement;
-  // console.log(targetElement.name);
-  switch (targetElement.name) {
-    case "Mathe":
-      console.log("Erfolgreich auf Mathe geklickt");
-      loadTopicPage();
-      break;
-    case "Akorde":
-      console.log("Erfolgreich auf Akorder geklickt");
-      break;
-  }
-} */
-
 function loadTopicPage() {
   // console.log("vor dem Ajax Aufruf");
   let data = sendXhr("GET", "12");
+  console.log(data);
 }
-
-// Wenn eine Antwort falsch ist, dann soll der Button dementsprechend rot (richtig -> grün) aufleuchten
