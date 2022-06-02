@@ -18,7 +18,7 @@ function getXhr() {
   } else return false;
 }
 
-function sendXhr(method, urlExt, data = null) {
+async function sendXhr(method, urlExt, data = null) {
   /*
    *  method: GET/POST
    *  url_ext: Suffix der Quell-URL
@@ -30,19 +30,22 @@ function sendXhr(method, urlExt, data = null) {
   xhr.onreadystatechange = xhrHandler;
   xhr.open(method, urlDest);
   xhr.setRequestHeader("Content-Type", "application/json");
-  // nice to have: hier evtl noch variable und Funktion, dass man pwd im Klartext eingeben kann und dann convertiert
-  xhr.setRequestHeader("Authorization", "Basic " + window.btoa(username + ":" + password));
+  xhr.setRequestHeader(
+    "Authorization",
+    "Basic " + window.btoa(username + ":" + password)
+  );
   xhr.send(data);
   // https://reqbin.com/req/javascript/c-wyuctivp/convert-curl-to-javascript
 }
 
 function xhrHandler() {
-  new Promise((resolve) => {
+  return new Promise((resolve, reject)  => {
     if (xhr.readyState == 4 && xhr.status == 200) {
       data = JSON.parse(xhr.responseText);
       console.log(data);
       resolve(data);
     }
+    reject(null);
   });
 }
 
@@ -84,8 +87,61 @@ function getChoices() {
   return;
 }
 
-function loadTopicPage() {
+async function loadTopicPage() {
   // console.log("vor dem Ajax Aufruf");
-  let data = sendXhr("GET", "12");
+  let data = await sendXhr("GET", "12");
   console.log(data);
+  console.log(await delay());
+  console.log(data);
+  
+}
+
+function delay() {
+  // `delay` returns a promise
+  return new Promise(function (resolve, reject) {
+    // Only `delay` is able to resolve or reject the promise
+    setTimeout(function () {
+      resolve(42); // After 3 seconds, resolve the promise with value 42
+    }, 3000);
+  });
+}
+
+
+
+
+var xhr = getXhr();
+
+function loadTopicPage() {
+  let data = await sendXhr("GET", "https://irene.informatik.htw-dresden.de:8888/api/quizzes/12");
+  console.log(data); 
+  // Hier kommt dann die Meldung, dass data undefined ist.
+  // Wie kann ich hier warten, bis die Variable gefüllt ist?
+}
+
+function getXhr() {
+  // API für asynchrone Aufrufe
+  if (window.XMLHttpRequest) {
+    var xhr = new XMLHttpRequest();
+    return xhr;
+  } else return false;
+}
+
+function sendXhr(method, url) {
+  xhr.onreadystatechange = xhrHandler;
+  xhr.open(method, url);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader(
+    "Authorization",
+    "Basic " + window.btoa(username + ":" + password)
+  );
+  xhr.send(data);
+}
+
+function xhrHandler() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      data = JSON.parse(xhr.responseText);
+      console.log(data);
+      // hier ist data gefüllt
+      return data;
+    }
 }
