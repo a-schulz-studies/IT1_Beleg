@@ -46,14 +46,14 @@ function loadTopicPage(event) {
   switch (targetElement.name) {
     case "Offline":
       const topics = Object.keys(sourceData);
-      createButtonsFromArray(topics, main, loadOfflineQuestions);
+      createButtonsFromArray(topics, main, prepOfflineQuestions);
       break;
     case "Online":
       break;
   }
 }
 
-function loadOfflineQuestions(event, position = 0) {
+function prepOfflineQuestions(event) {
   /* 
   position = Index, welche Aufgabe genommen werden soll
   */
@@ -64,11 +64,22 @@ function loadOfflineQuestions(event, position = 0) {
     topic = targetElement.name;
   } catch (error) {
   }
+  loadOfflineQuestions(topic, 0);
+}
+
+function loadOfflineQuestions(topic, position){
+  clearMain();
   const data = sourceData[topic];
+
+  if(position > data.length - 1){
+    console.log("Kategorie abgeschlossen");
+    return;
+  }
+
   // Aufgabenstellung erstellen
   const quest = document.createElement("div");
   quest.setAttribute("id", "question");
-  quest.setAttribute("system_identifier", "0");
+  quest.setAttribute("system_identifier", position);
   quest.innerHTML = data[position].a;
   main.appendChild(quest);
 
@@ -86,12 +97,30 @@ function submitAnswer(event) {
   const buttonName = targetElement.name;
   const questSet = document.getElementById("question");
   const questSetId = questSet.getAttribute("system_identifier");
-  const data = sourceData[topic];
-  // Hier muss gegen die originalen Daten geprüft werden, welchen Index der Button hat. Wenn 0 dann richtig.
-  console.log(data[questSetId]);
-  let index = data[questSetId].indexOf(buttonName);
-  console.log(index);
-  // get system_identifier from id question
+
+  // Anfrage, welchen Index das Element im quellArray besitzt
+  let index = sourceData[topic][questSetId]["l"].indexOf(buttonName);
+  if(index == 0){
+    userFeedback(true, parseInt(questSetId)+1, sourceData[topic].length);
+  }else{
+    userFeedback(false, parseInt(questSetId)+1, sourceData[topic].length);
+  }
+  loadOfflineQuestions(topic, parseInt(questSetId)+1);
+}
+
+function userFeedback(state, current, total){
+  let color, text;
+  if(state){
+    color = "green";
+    text= "Korrekt";
+  }else{
+    color = "red";
+    text = "Falsch";
+  }
+
+  console.log(current+ ""+ total);
+  const progressbar = document.getElementById("bar");
+  progressbar.style.setProperty('width', current/total*100 + '%')
 }
 
 /* 
