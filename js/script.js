@@ -15,7 +15,7 @@ const url = "https://irene.informatik.htw-dresden.de:8888/api/quizzes/";
 const username = "newtest@email.com";
 const password = "secret";
 var prevPage = "";
-var wait = true;
+let topic;
 
 /* Start
 startet die Funktionalität
@@ -53,27 +53,32 @@ function loadTopicPage(event) {
   }
 }
 
-function loadOfflineQuestions(event, position = 0, questSet) {
+function loadOfflineQuestions(event, position = 0) {
+  /* 
+  position = Index, welche Aufgabe genommen werden soll
+  */
   // prevPage = "loadTopicPage(Offline)"; //Muss noch angepasst werden (event)
   clearMain();
-  const targetElement = event.target || event.srcElement;
-  const key = targetElement.name;
-  // console.log(sourceData[key]);
-  const data = sourceData[key];
-    // console.log(data[i]);
-    // Aufgabenstellung erstellen
-    const quest = document.createElement("div");
-    quest.setAttribute("id", "question");
-    quest.setAttribute("system_identifier", "0");
-    quest.innerHTML = data[position].a;
-    main.appendChild(quest);
+  try {
+    const targetElement = event.target || event.srcElement;
+    topic = targetElement.name;
+  } catch (error) {
+  }
+  const data = sourceData[topic];
+  // Aufgabenstellung erstellen
+  const quest = document.createElement("div");
+  quest.setAttribute("id", "question");
+  quest.setAttribute("system_identifier", "0");
+  quest.innerHTML = data[position].a;
+  main.appendChild(quest);
 
-    // Mögliche Lösungen erstellen
-    const solution = document.createElement("div");
-    solution.setAttribute("class", "solution");
-    const mixedSolutions = randomizeArray(data[position].l);
-    createButtonsFromArray(mixedSolutions, solution, submitAnswer);
-    main.appendChild(solution);
+  // Mögliche Lösungen erstellen
+  const solution = document.createElement("div");
+  solution.setAttribute("class", "solution");
+
+  const mixedSolutions = randomizeArray(data[position].l);
+  createButtonsFromArray(mixedSolutions, solution, submitAnswer);
+  main.appendChild(solution);
 }
 
 function submitAnswer(event) {
@@ -81,13 +86,12 @@ function submitAnswer(event) {
   const buttonName = targetElement.name;
   const questSet = document.getElementById("question");
   const questSetId = questSet.getAttribute("system_identifier");
-
-// Hier muss gegen die originalen Daten geprüft werden, welchen Index der Button hat. Wenn 0 dann richtig.
-  let index = data.findIndex(function(item, i){
-    return item.name === val
-  });
+  const data = sourceData[topic];
+  // Hier muss gegen die originalen Daten geprüft werden, welchen Index der Button hat. Wenn 0 dann richtig.
+  console.log(data[questSetId]);
+  let index = data[questSetId].indexOf(buttonName);
+  console.log(index);
   // get system_identifier from id question
-
 }
 
 /* 
@@ -95,15 +99,14 @@ Support Functions
  */
 
 // Used for switching Elements in random order
-function randomizeArray(array) {
-  console.log(array)
+function randomizeArray([...array]) {
+  // dadurch wird sichergestellt, dass der originale Array nicht verändert wird.
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     const temp = array[i];
     array[i] = array[j];
     array[j] = temp;
   }
-  console.log(array);  
   return array;
 }
 
@@ -117,6 +120,7 @@ function createButtonsFromArray(input, where, listenerFunction) {
     let el = document.createElement("button");
     el.setAttribute("name", input[i]);
     el.setAttribute("system_identifier", i);
+    el.setAttribute("type", i);
     el.innerHTML = input[i];
     el.addEventListener("click", listenerFunction, false);
     where.appendChild(el);
