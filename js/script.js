@@ -105,7 +105,7 @@ function submitAnswer(event) {
   }else{
     userFeedback(false, parseInt(questSetId)+1, sourceData[topic].length);
   }
-  loadOfflineQuestions(topic, parseInt(questSetId)+1);
+  setTimeout(loadOfflineQuestions,500,topic, parseInt(questSetId)+1);
 }
 
 function userFeedback(state, current, total){
@@ -118,7 +118,12 @@ function userFeedback(state, current, total){
     text = "Falsch";
   }
 
-  console.log(current+ ""+ total);
+  const userFeedback = document.createElement("div");
+  userFeedback.setAttribute("id", "userFeedback");
+  userFeedback.innerHTML = text;
+  userFeedback.style.setProperty('background-color', color);
+  main.appendChild(userFeedback);
+
   const progressbar = document.getElementById("bar");
   progressbar.style.setProperty('width', current/total*100 + '%')
 }
