@@ -2,11 +2,8 @@
 /* 
 -> ZurückButton
 -> HomeButton
--> Button um die Statistik zurückzusetzen
 
-- Darstellung der MatheAufgaben soll durch Katex erfolgen
-- Reihenfolge der Aufgaben soll auch zufällig sein
-- Statistik am Ende jedes Durchlaufs
+- Problem random Fragen beheben
 - Responsive Design mittels mediaquerys
  */
 
@@ -29,62 +26,49 @@ function start() {
   loadStartPage(main);
 }
 
-/* StartSeite
-Hier kann man zwischen dem Offline und Online Modus wählen kann.
-*/
+// StartSeite - Hier kann man zwischen dem Offline und Online Modus wählen
 function loadStartPage(div) {
-  clearMain()
-  //Progessbar zurücksetzen
-  const progressbar = document.getElementById("bar");
-  progressbar.style.setProperty('width', '0%')
+  clearMain();
+  adjustProgressbar("0%");
+  topic = "";
   // prevPage = "loadStartPage";
   let options = ["Offline", "Online"];
   const inner = document.createElement("div");
   inner.setAttribute("id", "options");
-  createButtonsFromArray(options, inner, loadTopicPage);
+  createButtonsFromArray(options, inner, loadTopicPage, options);
   div.appendChild(inner);
 }
-/* TopicPage
-Hier werden die verschiedenen Themen der gewählten Option angezeigt
-*/
-function loadTopicPage(event) {
+
+//TopicPage - Hier werden die verschiedenen Themen der gewählten Option angezeigt
+function loadTopicPage(buttonName) {
   // prevPage = "loadStartPage";
   clearMain();
-  //Progessbar zurücksetzen
-  const progressbar = document.getElementById("bar");
-  progressbar.style.setProperty('width', '0%')
+  adjustProgressbar("0%");
+  topic = "";
 
-  const targetElement = event.target || event.srcElement;
-  switch (targetElement.name) {
+  switch (buttonName) {
     case "Offline":
       const topics = Object.keys(sourceData);
-      createButtonsFromArray(topics, main, prepOfflineQuestions);
+      createButtonsFromArray(topics, main, prepOfflineQuestions, topics);
       break;
     case "Online":
       break;
   }
 }
 
-function prepOfflineQuestions(event) {
-  // prevPage = "loadTopicPage(Offline)"; //Muss noch angepasst werden (event)
-  clearMain();
-  try {
-    const targetElement = event.target || event.srcElement;
-    topic = targetElement.name;
-  } catch (error) {
-    console.log("Funktion wurde ohne Event ausgelöst.")
-    console.log(error)
-  }
+// Helper Function für die loadOfflineQuestions
+function prepOfflineQuestions(buttonName) {
+  topic = buttonName;
   loadOfflineQuestions(topic, 0);
 }
 
-function loadOfflineQuestions(topic, position){
+function loadOfflineQuestions(topic, position) {
+  // prevPage = "loadTopicPage(Offline)"; //Muss noch angepasst werden (event)
   clearMain();
   const data = sourceData[topic];
 
-  if(position > data.length - 1){
-    console.log("Kategorie abgeschlossen");
-    loadStats();
+  if (position > data.length - 1) {
+    loadStats(false);
     return;
   }
 
@@ -93,9 +77,9 @@ function loadOfflineQuestions(topic, position){
   quest.setAttribute("id", "question");
   quest.setAttribute("system_identifier", position);
   quest.setAttribute("name", data[position].a);
-  if(topic == "teil-mathe"){
+  if (topic == "teil-mathe") {
     quest.innerHTML = `$${data[position].a}$`;
-  }else{
+  } else {
     quest.innerHTML = data[position].a;
   }
   main.appendChild(quest);
@@ -110,94 +94,83 @@ function loadOfflineQuestions(topic, position){
 
   // console.log(Object.keys(statsOffline));
   // console.log(Object.keys(statsOffline).indexOf(topic))
-  if(Object.keys(statsOffline).indexOf(topic) == -1){ //Key noch nicht vorhanden
+  if (Object.keys(statsOffline).indexOf(topic) == -1) {
+    //Key noch nicht vorhanden
     // console.log("Key noch nicht vorhanden");
-    statsOffline[topic] = {"Richtig": 0, "Falsch":0};
+    statsOffline[topic] = { Richtig: 0, Falsch: 0 };
     // console.log(statsOffline);
   }
-  window.renderMathInElement(main, {delimiters: [
-    {left: "$$", right: "$$", display: true},
-  {left: "$", right: "$", display: false}
-  ]} );
+  window.renderMathInElement(main, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false },
+    ],
+  });
 }
 
-function loadStats(){
+// Zeigt die Statistikseite an, clearStats = true löscht die Statistik
+function loadStats(clearStats) {
+  if(clearStats){statsOffline = {}}
   clearMain();
+  topic = "";
+
   const statsDiv = document.createElement("div");
   statsDiv.setAttribute("class", "stats");
 
   const keys = Object.keys(statsOffline);
-  for(let i in keys){
+  for (let i in keys) {
     let topic = document.createElement("p");
     topic.setAttribute("class", "topic");
     topic.innerHTML = keys[i];
 
     const ul = document.createElement("ul");
     const subKeys = Object.keys(statsOffline[keys[i]]);
-    for(let j in subKeys){
+    for (let j in subKeys) {
       const li = document.createElement("li");
       li.innerHTML = subKeys[j] + ": " + statsOffline[keys[i]][subKeys[j]];
-      // console.log(subKeys[j]);
-      // console.log(statsOffline[keys[i]][subKeys[j]]);
       ul.appendChild(li);
     }
     statsDiv.appendChild(topic);
     statsDiv.appendChild(ul);
   }
-  const additionalOptions = ["Neues Thema wählen", "Zurück zum Start"];
-
   main.appendChild(statsDiv);
 
-  const event = new CustomEvent("Offline", {"target":{"name":"Offline"}});
-  console.log(event);
-  console.log(event.target);
-  console.log(event.target.name);
-  let b1 = document.createElement("button");
-  b1.setAttribute("name", additionalOptions[0]);
-  b1.setAttribute("system_identifier", 0);
-  b1.innerHTML = additionalOptions[0];
-  // b1.addEventListener("click", function(){loadTopicPage(event)}, false);
-  main.appendChild(b1);
-  
-  let b2 = document.createElement("button");
-  b2.setAttribute("name", additionalOptions[1]);
-  b2.setAttribute("system_identifier", 1);
-  b2.innerHTML = additionalOptions[1];
-  b2.addEventListener("click", function(){loadStartPage(main)}, false);
-  main.appendChild(b2);
+  const additionalOptions = ["Anderes Thema wählen", "Offline oder Onnline?", "Statistik löschen"];
+  const additionalEventListeners = [loadTopicPage, loadStartPage, loadStats];
+  const additionalListenerParams = ["Offline", main, true];
+
+  createButtonsFromArray(additionalOptions, main, additionalEventListeners, additionalListenerParams);
 }
 
 // Prüfen, ob die gewählte Antwort richtig war
-function submitOfflineAnswer(event) {
-  const targetElement = event.target || event.srcElement;
-  const buttonName = targetElement.name;
+function submitOfflineAnswer() {
   const question = document.getElementById("question");
-  const questionName = question.getAttribute("name");
+  // const questionName = question.getAttribute("name");
   const questionId = question.getAttribute("system_identifier");
-  
+
   // const sourceQuestion = sourceData[topic].findIndex(element => element["a"] = questionName);
   const index = 0; //sourceData[topic][sourceQuestion]["l"].indexOf(buttonName);
-  
-  if(index == 0){
+
+  if (index == 0) {
     // Bei richtiger Antwort
-    userFeedback(true, parseInt(questionId)+1, sourceData[topic].length);
+    userFeedback(true, parseInt(questionId) + 1, sourceData[topic].length);
     statsOffline[topic]["Richtig"] = statsOffline[topic]["Richtig"] + 1;
     // console.log(statsOffline);
-  }else{
+  } else {
     // bei falscher Antwort
-    userFeedback(false, parseInt(questionId)+1, sourceData[topic].length);
+    userFeedback(false, parseInt(questionId) + 1, sourceData[topic].length);
     statsOffline[topic]["Richtig"] = statsOffline[topic]["Falsch"] + 1;
   }
-  setTimeout(loadOfflineQuestions,500,topic, parseInt(questionId)+1);
+  setTimeout(loadOfflineQuestions, 500, topic, parseInt(questionId) + 1);
 }
 
 // Gibt ein visuelles Feedback, ob die Frage richtig oder falsch beantwortet wurde.
-function userFeedback(state, current, total){
+function userFeedback(state, current, total) {
   let color, text;
-  if(state){
+  if (state) {
     color = "green";
-    text= "Korrekt";
-  }else{
+    text = "Korrekt";
+  } else {
     color = "red";
     text = "Falsch";
   }
@@ -205,17 +178,15 @@ function userFeedback(state, current, total){
   const userFeedback = document.createElement("div");
   userFeedback.setAttribute("id", "userFeedback");
   userFeedback.innerHTML = text;
-  userFeedback.style.setProperty('background-color', color);
+  userFeedback.style.setProperty("background-color", color);
   main.appendChild(userFeedback);
 
-  const progressbar = document.getElementById("bar");
-  progressbar.style.setProperty('width', current/total*100 + '%')
+  adjustProgressbar((current / total) * 100 + "%");
 }
 
 /* 
-Support Functions
- */
-
+// Support Functions
+*/
 // Used for switching Elements in random order
 function randomizeArray([...array]) {
   // dadurch wird sichergestellt, dass der originale Array nicht verändert wird.
@@ -232,21 +203,60 @@ function randomizeArray([...array]) {
 function clearMain() {
   document.getElementById("main").innerHTML = "";
 }
-/* Creates Buttons in specified div with EventListener on each button */
-function createButtonsFromArray(input, where, listenerFunction) {
+
+// Creates Buttons in specified div with EventListener on each button
+function createButtonsFromArray(
+  input,
+  where,
+  listenerFunction,
+  functionParam = []
+) {
   for (let i in input) {
     let el = document.createElement("button");
     el.setAttribute("name", input[i]);
     el.setAttribute("system_identifier", i);
     el.setAttribute("type", i);
-    if(topic == "teil-mathe"){
+    if (topic == "teil-mathe") {
       el.innerHTML = `$${input[i]}$`;
-    }else{
+    } else {
       el.innerHTML = input[i];
     }
-    el.addEventListener("click", listenerFunction, false);
+    // Mehrere Funktionen
+    if (listenerFunction.length == input.length) {
+      // Mehrere Funktionen + jeweiliger Paramerter
+      if (functionParam != [] && functionParam[i] != "") {
+        el.addEventListener(
+          "click",
+          function () {
+            listenerFunction[i](functionParam[i]);
+          },
+          false
+        );
+      }else { //Mehrere Funktionen + jeweiliger Parameter ist nicht vorhanden
+        el.addEventListener("click", listenerFunction[i], false);
+      }
+    } else { // Nur eine Funktion
+      // Nur eine Funktion + jeweiliger Parameter ist vorhanden
+      if (functionParam != [] && functionParam[i] != "") {
+        el.addEventListener(
+          "click",
+          function () {
+            listenerFunction(functionParam[i]);
+          },
+          false
+        );
+        // Nur eine Funktion + keine Parameter vorhanden
+      } else {
+        el.addEventListener("click", listenerFunction, false);
+      }
+    }
+
     where.appendChild(el);
   }
 }
 
-// Lösung des Array Problems, alle Aufgaben inkl. Lösungen in ein Stringarry davon dann die Reihenfolge tauschen und dann wie gewohnt weitermachen
+// Anpassen der Progressbar mit bestimmter Prozentzahl + "%"" Zeichen
+function adjustProgressbar(percent) {
+  const progressbar = document.getElementById("bar");
+  progressbar.style.setProperty("width", percent);
+}
