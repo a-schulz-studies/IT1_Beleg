@@ -2,6 +2,7 @@
 /* 
 -> ZurückButton
 -> HomeButton
+-> Button um die Statistik zurückzusetzen
 
 - Darstellung der MatheAufgaben soll durch Katex erfolgen
 - Reihenfolge der Aufgaben soll auch zufällig sein
@@ -32,6 +33,10 @@ function start() {
 Hier kann man zwischen dem Offline und Online Modus wählen kann.
 */
 function loadStartPage(div) {
+  clearMain()
+  //Progessbar zurücksetzen
+  const progressbar = document.getElementById("bar");
+  progressbar.style.setProperty('width', '0%')
   // prevPage = "loadStartPage";
   let options = ["Offline", "Online"];
   const inner = document.createElement("div");
@@ -45,6 +50,10 @@ Hier werden die verschiedenen Themen der gewählten Option angezeigt
 function loadTopicPage(event) {
   // prevPage = "loadStartPage";
   clearMain();
+  //Progessbar zurücksetzen
+  const progressbar = document.getElementById("bar");
+  progressbar.style.setProperty('width', '0%')
+
   const targetElement = event.target || event.srcElement;
   switch (targetElement.name) {
     case "Offline":
@@ -84,7 +93,11 @@ function loadOfflineQuestions(topic, position){
   quest.setAttribute("id", "question");
   quest.setAttribute("system_identifier", position);
   quest.setAttribute("name", data[position].a);
-  quest.innerHTML = data[position].a;
+  if(topic == "teil-mathe"){
+    quest.innerHTML = `$${data[position].a}$`;
+  }else{
+    quest.innerHTML = data[position].a;
+  }
   main.appendChild(quest);
 
   // Mögliche Lösungen erstellen
@@ -102,6 +115,10 @@ function loadOfflineQuestions(topic, position){
     statsOffline[topic] = {"Richtig": 0, "Falsch":0};
     // console.log(statsOffline);
   }
+  window.renderMathInElement(main, {delimiters: [
+    {left: "$$", right: "$$", display: true},
+  {left: "$", right: "$", display: false}
+  ]} );
 }
 
 function loadStats(){
@@ -127,8 +144,27 @@ function loadStats(){
     statsDiv.appendChild(topic);
     statsDiv.appendChild(ul);
   }
+  const additionalOptions = ["Neues Thema wählen", "Zurück zum Start"];
 
   main.appendChild(statsDiv);
+
+  const event = new CustomEvent("Offline", {"target":{"name":"Offline"}});
+  console.log(event);
+  console.log(event.target);
+  console.log(event.target.name);
+  let b1 = document.createElement("button");
+  b1.setAttribute("name", additionalOptions[0]);
+  b1.setAttribute("system_identifier", 0);
+  b1.innerHTML = additionalOptions[0];
+  // b1.addEventListener("click", function(){loadTopicPage(event)}, false);
+  main.appendChild(b1);
+  
+  let b2 = document.createElement("button");
+  b2.setAttribute("name", additionalOptions[1]);
+  b2.setAttribute("system_identifier", 1);
+  b2.innerHTML = additionalOptions[1];
+  b2.addEventListener("click", function(){loadStartPage(main)}, false);
+  main.appendChild(b2);
 }
 
 // Prüfen, ob die gewählte Antwort richtig war
@@ -203,7 +239,11 @@ function createButtonsFromArray(input, where, listenerFunction) {
     el.setAttribute("name", input[i]);
     el.setAttribute("system_identifier", i);
     el.setAttribute("type", i);
-    el.innerHTML = input[i];
+    if(topic == "teil-mathe"){
+      el.innerHTML = `$${input[i]}$`;
+    }else{
+      el.innerHTML = input[i];
+    }
     el.addEventListener("click", listenerFunction, false);
     where.appendChild(el);
   }
