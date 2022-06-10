@@ -1,8 +1,5 @@
 // TODO:
 /* 
--> ZurückButton
--> HomeButton
-
 - Problem random Fragen beheben
 - Responsive Design mittels mediaquerys
  */
@@ -17,6 +14,7 @@ const password = "secret";
 var prevPage = "";
 let topic;
 let statsOffline = {};
+let questionIds;
 
 /* Start
 startet die Funktionalität
@@ -31,7 +29,7 @@ function loadStartPage(div) {
   clearMain();
   adjustProgressbar("0%");
   topic = "";
-  // prevPage = "loadStartPage";
+  prevPage = function(){loadStartPage(main)};
   let options = ["Offline", "Online"];
   const inner = document.createElement("div");
   inner.setAttribute("id", "options");
@@ -41,7 +39,7 @@ function loadStartPage(div) {
 
 //TopicPage - Hier werden die verschiedenen Themen der gewählten Option angezeigt
 function loadTopicPage(buttonName) {
-  // prevPage = "loadStartPage";
+  prevPage = function(){loadStartPage(main)};
   clearMain();
   adjustProgressbar("0%");
   topic = "";
@@ -59,15 +57,17 @@ function loadTopicPage(buttonName) {
 // Helper Function für die loadOfflineQuestions
 function prepOfflineQuestions(buttonName) {
   topic = buttonName;
-  loadOfflineQuestions(topic, 0);
+  questionIds = randomizeArray(createNumberedArray(sourceData[topic].length));
+  loadOfflineQuestions(topic);
 }
 
-function loadOfflineQuestions(topic, position) {
-  // prevPage = "loadTopicPage(Offline)"; //Muss noch angepasst werden (event)
+function loadOfflineQuestions(topic) {
+  prevPage = function(){loadTopicPage("Offline")};
   clearMain();
   const data = sourceData[topic];
+  const position = questionIds.shift();
 
-  if (position > data.length - 1) {
+  if (position == undefined) {
     loadStats(false);
     return;
   }
@@ -89,16 +89,12 @@ function loadOfflineQuestions(topic, position) {
   solution.setAttribute("class", "solution");
 
   const mixedSolutions = randomizeArray(data[position].l);
-  createButtonsFromArray(mixedSolutions, solution, submitOfflineAnswer);
+  createButtonsFromArray(mixedSolutions, solution, submitOfflineAnswer, mixedSolutions);
   main.appendChild(solution);
 
-  // console.log(Object.keys(statsOffline));
-  // console.log(Object.keys(statsOffline).indexOf(topic))
   if (Object.keys(statsOffline).indexOf(topic) == -1) {
-    //Key noch nicht vorhanden
-    // console.log("Key noch nicht vorhanden");
+    //Key noch nicht vorhanden -> neu erstellen
     statsOffline[topic] = { Richtig: 0, Falsch: 0 };
-    // console.log(statsOffline);
   }
   window.renderMathInElement(main, {
     delimiters: [
@@ -135,7 +131,7 @@ function loadStats(clearStats) {
   }
   main.appendChild(statsDiv);
 
-  const additionalOptions = ["Anderes Thema wählen", "Offline oder Onnline?", "Statistik löschen"];
+  const additionalOptions = ["Anderes Thema wählen", "Offline oder Online?", "Statistik löschen"];
   const additionalEventListeners = [loadTopicPage, loadStartPage, loadStats];
   const additionalListenerParams = ["Offline", main, true];
 
@@ -143,25 +139,21 @@ function loadStats(clearStats) {
 }
 
 // Prüfen, ob die gewählte Antwort richtig war
-function submitOfflineAnswer() {
-  const question = document.getElementById("question");
-  // const questionName = question.getAttribute("name");
-  const questionId = question.getAttribute("system_identifier");
+function submitOfflineAnswer(buttonName) {
+  const question = document.getElementById("question").getAttribute("name");
+  const currentData = sourceData[topic].filter(element => element["a"] == question);
 
-  // const sourceQuestion = sourceData[topic].findIndex(element => element["a"] = questionName);
-  const index = 0; //sourceData[topic][sourceQuestion]["l"].indexOf(buttonName);
-
+  const index = currentData[0]["l"].indexOf(buttonName);
   if (index == 0) {
     // Bei richtiger Antwort
-    userFeedback(true, parseInt(questionId) + 1, sourceData[topic].length);
+    userFeedback(true, sourceData[topic].length - questionIds.length, sourceData[topic].length);
     statsOffline[topic]["Richtig"] = statsOffline[topic]["Richtig"] + 1;
-    // console.log(statsOffline);
   } else {
     // bei falscher Antwort
-    userFeedback(false, parseInt(questionId) + 1, sourceData[topic].length);
-    statsOffline[topic]["Richtig"] = statsOffline[topic]["Falsch"] + 1;
+    userFeedback(false, sourceData[topic].length - questionIds.length, sourceData[topic].length);
+    statsOffline[topic]["Falsch"] = statsOffline[topic]["Falsch"] + 1;
   }
-  setTimeout(loadOfflineQuestions, 500, topic, parseInt(questionId) + 1);
+  setTimeout(loadOfflineQuestions, 500, topic);
 }
 
 // Gibt ein visuelles Feedback, ob die Frage richtig oder falsch beantwortet wurde.
@@ -215,7 +207,6 @@ function createButtonsFromArray(
     let el = document.createElement("button");
     el.setAttribute("name", input[i]);
     el.setAttribute("system_identifier", i);
-    el.setAttribute("type", i);
     if (topic == "teil-mathe") {
       el.innerHTML = `$${input[i]}$`;
     } else {
@@ -259,4 +250,18 @@ function createButtonsFromArray(
 function adjustProgressbar(percent) {
   const progressbar = document.getElementById("bar");
   progressbar.style.setProperty("width", percent);
+}
+
+// Läd die vorherige Seite
+function loadPrevPage(){
+  prevPage();
+}
+
+// Erzeugt ein durchnummeriertes Array mit der vorgegebenen Länge
+function createNumberedArray(length){
+      let array = [];
+      for(let i = 0; i < length; i++){
+        array[i] = i;
+      }
+      return array;
 }
