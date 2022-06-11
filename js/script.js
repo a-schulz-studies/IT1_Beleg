@@ -1,6 +1,5 @@
 // TODO:
 /* 
-- Problem random Fragen beheben
 - Responsive Design mittels mediaquerys
  */
 
@@ -13,7 +12,7 @@ const username = "newtest@email.com";
 const password = "secret";
 var prevPage = "";
 let topic;
-let statsOffline = {};
+let stats = {};
 let questionIds;
 
 /* Start
@@ -50,9 +49,35 @@ function loadTopicPage(buttonName) {
       createButtonsFromArray(topics, main, prepOfflineQuestions, topics);
       break;
     case "Online":
+      loadOnlineQuestions();
       break;
   }
 }
+
+function sendRequest(url, method, body = "") {
+  const options = {
+      method: method,
+      headers: new Headers({
+        'content-type': 'application/json',
+        'Authorization': "Basic " + window.btoa(username + ":" + password)
+      }),
+      // mode: 'no-cors'
+  };
+
+  if(method == "POST"){
+    options.body = JSON.stringify(body);
+  }
+
+  return fetch(url, options);
+}
+
+// Läd die OnlineFragen
+function loadOnlineQuestions(){
+  sendRequest(url, "GET")
+  .then(response => response.json())
+  .then(data => console.log(data));
+}
+
 
 // Helper Function für die loadOfflineQuestions
 function prepOfflineQuestions(buttonName) {
@@ -61,6 +86,7 @@ function prepOfflineQuestions(buttonName) {
   loadOfflineQuestions(topic);
 }
 
+// Rendert die Fragestellungen und die Lösungsmöglichkeiten
 function loadOfflineQuestions(topic) {
   prevPage = function(){loadTopicPage("Offline")};
   clearMain();
@@ -92,9 +118,9 @@ function loadOfflineQuestions(topic) {
   createButtonsFromArray(mixedSolutions, solution, submitOfflineAnswer, mixedSolutions);
   main.appendChild(solution);
 
-  if (Object.keys(statsOffline).indexOf(topic) == -1) {
+  if (Object.keys(stats).indexOf(topic) == -1) {
     //Key noch nicht vorhanden -> neu erstellen
-    statsOffline[topic] = { Richtig: 0, Falsch: 0 };
+    stats[topic] = { Richtig: 0, Falsch: 0 };
   }
   window.renderMathInElement(main, {
     delimiters: [
@@ -106,24 +132,25 @@ function loadOfflineQuestions(topic) {
 
 // Zeigt die Statistikseite an, clearStats = true löscht die Statistik
 function loadStats(clearStats) {
-  if(clearStats){statsOffline = {}}
+  // Dadurch wird die Statistik gelöscht
+  if(clearStats){stats = {}}
   clearMain();
   topic = "";
 
   const statsDiv = document.createElement("div");
   statsDiv.setAttribute("class", "stats");
 
-  const keys = Object.keys(statsOffline);
+  const keys = Object.keys(stats);
   for (let i in keys) {
     let topic = document.createElement("p");
     topic.setAttribute("class", "topic");
     topic.innerHTML = keys[i];
 
     const ul = document.createElement("ul");
-    const subKeys = Object.keys(statsOffline[keys[i]]);
+    const subKeys = Object.keys(stats[keys[i]]);
     for (let j in subKeys) {
       const li = document.createElement("li");
-      li.innerHTML = subKeys[j] + ": " + statsOffline[keys[i]][subKeys[j]];
+      li.innerHTML = subKeys[j] + ": " + stats[keys[i]][subKeys[j]];
       ul.appendChild(li);
     }
     statsDiv.appendChild(topic);
@@ -147,11 +174,11 @@ function submitOfflineAnswer(buttonName) {
   if (index == 0) {
     // Bei richtiger Antwort
     userFeedback(true, sourceData[topic].length - questionIds.length, sourceData[topic].length);
-    statsOffline[topic]["Richtig"] = statsOffline[topic]["Richtig"] + 1;
+    stats[topic]["Richtig"] = stats[topic]["Richtig"] + 1;
   } else {
     // bei falscher Antwort
     userFeedback(false, sourceData[topic].length - questionIds.length, sourceData[topic].length);
-    statsOffline[topic]["Falsch"] = statsOffline[topic]["Falsch"] + 1;
+    stats[topic]["Falsch"] = stats[topic]["Falsch"] + 1;
   }
   setTimeout(loadOfflineQuestions, 500, topic);
 }
