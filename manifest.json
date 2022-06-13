@@ -1,0 +1,16 @@
+
+{
+    "description": "Easy Learn von Alexander Schulz",
+    "display": "standalone",
+    "name": "Easy Lern von Alexander Schulz",
+    "orientation": "portrait",
+    "short_name": "EasyLearn",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "images/icon512.png",
+            "sizes": "512x512"
+        }
+    ]
+}
