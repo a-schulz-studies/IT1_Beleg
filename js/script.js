@@ -134,7 +134,7 @@ function loadOnlineQuestions() {
 
   const mixedSolutions = randomizeArray(serverData[position]["options"]);
   createCheckboxFromArray(mixedSolutions, solution);
-  
+
   const submit = document.createElement("button");
   submit.setAttribute("name", "submit");
   submit.innerHTML = "Weiter";
@@ -158,20 +158,18 @@ function submitOnlineAnswer() {
 
   // Hier stehen die Namen der angewählten Boxen
   const answer = getCheckedBoxes();
-  // console.log(answer);
   let solutions = [];
   for (let i in answer) {
     const index = serverData[question]["options"].indexOf(answer[i]);
     solutions.push(index);
   }
-  console.log(solutions);
 
   if (solutions.length == 0) {
     solutions = "";
   } else {
     solutions = solutions.toString();
   }
-  const id = parseInt(question) + 1;
+  const id = serverData[question]["id"];
 
   // Anfrage beim Server, ob das Ergebnis richtig ist.
   sendRequest(url + id + "/solve", "POST", "[" + solutions + "]")
@@ -297,7 +295,11 @@ function loadStats(clearStats) {
     "Online Teil",
     "Statistik löschen",
   ];
-  const additionalEventListeners = [loadTopicPage, loadStartPage, loadStats];
+  const additionalEventListeners = [
+    loadTopicPage,
+    prepOnlineQuestions,
+    loadStats,
+  ];
   const additionalListenerParams = ["Offline", main, true];
 
   createButtonsFromArray(
@@ -459,14 +461,14 @@ function createCheckboxFromArray(input, where) {
     el.setAttribute("class", "choices");
     el.setAttribute("system_identifier", i);
 
-    el.addEventListener('click', event => {
+    el.addEventListener("click", (event) => {
       var label = el.parentNode;
       if (el.checked) {
         label.style.fontWeight = "bold";
-        label.style.backgroundColor = 'grey';
+        label.style.backgroundColor = "grey";
       } else {
-        label.style.fontWeight = "normal"
-        label.style.backgroundColor = 'transparent';
+        label.style.fontWeight = "normal";
+        label.style.backgroundColor = "transparent";
       }
     });
     label.appendChild(el);
