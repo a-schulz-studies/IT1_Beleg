@@ -1,7 +1,6 @@
 // TODO:
 /* 
 - Responsive Design mittels mediaquerys
--PWA
 
 -Misserfolge:
   Umstellung xhr -> fetch
@@ -11,6 +10,13 @@
 
 // Initializig Functionality
 window.addEventListener("load", start, false);
+
+// Service Worker registrieren für PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('serviceWorker.js')
+    .then(reg => console.log(reg))
+    .catch(err => console.log(err));
+}
 
 // Global variables
 const url = "https://irene.informatik.htw-dresden.de:8888/api/quizzes/";

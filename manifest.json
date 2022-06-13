@@ -7,6 +7,7 @@
     "short_name": "EasyLearn",
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
+    "start_url": "https://www2.htw-dresden.de/~s82105/IT1_Beleg/index.html",
     "icons": [
         {
             "src": "images/icon512.png",
