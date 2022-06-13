@@ -1,8 +1,5 @@
 // TODO:
 /* 
-- afterSubmit nochmal prüfen
-- ShowStats als Button oben in der Leiste
-
 - Responsive Design mittels mediaquerys
 -PWA
 
@@ -87,20 +84,21 @@ function sendRequest(url, method, body = "") {
 
 // Läd die OnlineFragen
 function prepOnlineQuestions() {
-  const result = sendRequest(url, "GET")
+  const wait = document.createElement("div");
+  wait.setAttribute("name", "wait");
+  wait.innerHTML = "Bitte warten";
+  main.appendChild(wait);
+  sendRequest(url, "GET")
     .then((response) => response.json())
     .then((data) => (serverData = data.content))
     .then(
       () =>
-        (questionIds = randomizeArray(
-          createNumberedArray(serverData.length)
-        ))
+        (questionIds = randomizeArray(createNumberedArray(serverData.length)))
     )
     .then(loadOnlineQuestions);
 }
 
 function loadOnlineQuestions() {
-  // console.log(serverData);
   topic = "Online";
   prevPage = function () {
     loadStartPage(main);
@@ -114,13 +112,13 @@ function loadOnlineQuestions() {
     return;
   }
 
-    // Titel erstellen
-    const title = document.createElement("div");
-    title.setAttribute("id", "title");
-    title.setAttribute("system_identifier", position);
-    title.setAttribute("name", serverData[position]["title"]);
-    title.innerHTML = "Titel: " + serverData[position]["title"];
-    main.appendChild(title);
+  // Titel erstellen
+  const title = document.createElement("div");
+  title.setAttribute("id", "title");
+  title.setAttribute("system_identifier", position);
+  title.setAttribute("name", serverData[position]["title"]);
+  title.innerHTML = "Titel: " + serverData[position]["title"];
+  main.appendChild(title);
 
   // Aufgabenstellung erstellen
   const quest = document.createElement("div");
@@ -135,16 +133,13 @@ function loadOnlineQuestions() {
   solution.setAttribute("class", "solution");
 
   const mixedSolutions = randomizeArray(serverData[position]["options"]);
-  createCheckboxFromArray(
-    mixedSolutions,
-    solution
-  );
+  createCheckboxFromArray(mixedSolutions, solution);
   const submit = document.createElement("button");
   submit.setAttribute("name", "submit");
   submit.innerHTML = "Weiter";
-  
+
   submit.addEventListener("click", submitOnlineAnswer, false);
-  
+
   main.appendChild(solution);
   main.appendChild(submit);
 
@@ -155,41 +150,49 @@ function loadOnlineQuestions() {
 }
 
 // Überprüfen der Angewählten Antworten - Online
-function submitOnlineAnswer(){
-  const question = document.getElementById("question").getAttribute("system_identifier");
-  
+function submitOnlineAnswer() {
+  const question = document
+    .getElementById("question")
+    .getAttribute("system_identifier");
+
   // Hier stehen die Namen der angewählten Boxen
   const answer = getCheckedBoxes();
   // console.log(answer);
   let solutions = [];
-  for(let i in answer){
+  for (let i in answer) {
     const index = serverData[question]["options"].indexOf(answer[i]);
     solutions.push(index);
   }
   console.log(solutions);
 
-  if(solutions.length == 0){
+  if (solutions.length == 0) {
     solutions = "";
-  }else{
+  } else {
     solutions = solutions.toString();
   }
   const id = parseInt(question) + 1;
 
   // Anfrage beim Server, ob das Ergebnis richtig ist.
   sendRequest(url + id + "/solve", "POST", "[" + solutions + "]")
-  .then(response => response.json())
-  .then(data => afterSubmit(data["success"]));
+    .then((response) => response.json())
+    .then((data) => afterSubmit(data["success"]));
+  // Anzeige, dass das Ergebnis geprüft wird.
+  const userFeedback = document.createElement("div");
+  userFeedback.setAttribute("id", "userFeedback");
+  userFeedback.innerHTML = "Ergebnis wird geprüft.";
+  userFeedback.style.setProperty("background-color", "white");
+  main.appendChild(userFeedback);
 }
 
-function afterSubmit(state){
-  if(state){
+function afterSubmit(state) {
+  if (state) {
     userFeedback(
       true,
       serverData.length - questionIds.length,
       serverData.length
     );
     stats["Online"]["Richtig"] = stats[topic]["Richtig"] + 1;
-  }else{
+  } else {
     userFeedback(
       false,
       serverData.length - questionIds.length,
@@ -289,8 +292,8 @@ function loadStats(clearStats) {
   main.appendChild(statsDiv);
 
   const additionalOptions = [
-    "Anderes Thema wählen",
-    "Offline oder Online?",
+    "Offline Themen",
+    "Online Teil",
     "Statistik löschen",
   ];
   const additionalEventListeners = [loadTopicPage, loadStartPage, loadStats];
@@ -445,13 +448,14 @@ function createNumberedArray(length) {
 }
 
 // Erstellt Radiobuttons und zeigt sie in entsprechendem Element an
-function createCheckboxFromArray(input, where){
-  for(let i in input){
+function createCheckboxFromArray(input, where) {
+  for (let i in input) {
     const label = document.createElement("label");
     label.innerHTML = input[i];
     const el = document.createElement("input");
     el.setAttribute("type", "checkbox");
     el.setAttribute("name", input[i]);
+    el.setAttribute("class", "choices");
     el.setAttribute("system_identifier", i);
     label.appendChild(el);
     where.appendChild(label);
@@ -459,14 +463,14 @@ function createCheckboxFromArray(input, where){
 }
 
 function getCheckedBoxes() {
-  var checkboxes = document.querySelectorAll('input[type=checkbox]')
+  var checkboxes = document.querySelectorAll("input[type=checkbox]");
   var checkboxesChecked = [];
   // loop over them all
-  for (var i=0; i<checkboxes.length; i++) {
-     // And stick the checked ones onto an array...
-     if (checkboxes[i].checked) {
-        checkboxesChecked.push(checkboxes[i].getAttribute("name"));
-     }
+  for (var i = 0; i < checkboxes.length; i++) {
+    // And stick the checked ones onto an array...
+    if (checkboxes[i].checked) {
+      checkboxesChecked.push(checkboxes[i].getAttribute("name"));
+    }
   }
   // Return the array if it is non-empty, or null
   return checkboxesChecked.length > 0 ? checkboxesChecked : null;
