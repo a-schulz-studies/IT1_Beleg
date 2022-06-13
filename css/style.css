@@ -57,9 +57,7 @@ button{
 .choices {
     display: none;
   }
-input[type=checkbox]:checked + label {
-    font-weight: bold;
-  }
+
 label{
     padding: 1px 5px 1px 5px;
     margin: 3px;

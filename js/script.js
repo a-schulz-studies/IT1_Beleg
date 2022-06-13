@@ -134,6 +134,7 @@ function loadOnlineQuestions() {
 
   const mixedSolutions = randomizeArray(serverData[position]["options"]);
   createCheckboxFromArray(mixedSolutions, solution);
+  
   const submit = document.createElement("button");
   submit.setAttribute("name", "submit");
   submit.innerHTML = "Weiter";
@@ -457,6 +458,17 @@ function createCheckboxFromArray(input, where) {
     el.setAttribute("name", input[i]);
     el.setAttribute("class", "choices");
     el.setAttribute("system_identifier", i);
+
+    el.addEventListener('click', event => {
+      var label = el.parentNode;
+      if (el.checked) {
+        label.style.fontWeight = "bold";
+        label.style.backgroundColor = 'grey';
+      } else {
+        label.style.fontWeight = "normal"
+        label.style.backgroundColor = 'transparent';
+      }
+    });
     label.appendChild(el);
     where.appendChild(label);
   }

@@ -1,10 +1,3 @@
-<div class="auswahl">
-                  <h3>BLOCKAUSWAHL</h3>
-                  <form>
-                     <fieldset>
-                  <input class="choices" type="radio" id="A" name="Auswahl"/>
-                  <label for="A">A</label> 
-
 [
     {
         "id": 1,
