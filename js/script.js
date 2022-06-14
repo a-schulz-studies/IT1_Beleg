@@ -83,6 +83,7 @@ function sendRequest(url, method, body = "") {
 
 // Läd die OnlineFragen
 function prepOnlineQuestions() {
+  adjustProgressbar("0%");
   const wait = document.createElement("div");
   wait.setAttribute("name", "wait");
   wait.innerHTML = "Bitte warten";
@@ -261,6 +262,7 @@ function loadOfflineQuestions(topic) {
 
 // Zeigt die Statistikseite an, clearStats = true löscht die Statistik
 function loadStats(clearStats) {
+  adjustProgressbar("100%");
   // Dadurch wird die Statistik gelöscht
   if (clearStats) {
     stats = {};
