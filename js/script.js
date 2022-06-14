@@ -483,7 +483,7 @@ function createCheckboxFromArray(input, where) {
 }
 
 function getCheckedBoxes() {
-  var checkboxes = document.querySelectorAll("input[type=checkbox]");
+  const checkboxes = document.querySelectorAll("input[type=checkbox]");
   var checkboxesChecked = [];
   // loop over them all
   for (var i = 0; i < checkboxes.length; i++) {
@@ -494,4 +494,17 @@ function getCheckedBoxes() {
   }
   // Return the array if it is non-empty, or null
   return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+}
+
+function hamburgerMenu(){
+  const button = document.querySelectorAll("#control > button");
+  if(button[0].style.visibility == "visible"){
+    for(let i = 0; i < button.length; i++){
+      button[i].style.visibility = "hidden";
+    }
+  }else{
+    for(let i = 0; i < button.length; i++){
+      button[i].style.visibility = "visible";
+    }
+  }
 }
