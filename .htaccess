@@ -1,0 +1,5 @@
+<Files "index.html">
+AddCharset UTF-8 .html
+</Files>
+AddType application/xhtml+xml .xhtml
+AddType text/cache-manifest .appcache
