@@ -1,12 +1,5 @@
 // TODO:
-/* 
-- Responsive Design mittels mediaquerys
 
--Misserfolge:
-  Umstellung xhr -> fetch
-  zufällige Reihenfolge der Aufgaben -> identifikation der Elemente war zum Teil schwierig
-  Code wird schnell unübersichtlich
- */
 
 // Initializig Functionality
 window.addEventListener("load", start, false);
