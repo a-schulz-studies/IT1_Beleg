@@ -1,13 +1,14 @@
 body{
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-header{
     text-align: center;
+    font-size: larger;
 }
 
-#main{
-
+#main > * {
+    display: block;
+    justify-content: center;  
+    align-items: center; 
+    font-size: inherit;
 }
 
 #progress{
@@ -23,10 +24,6 @@ header{
     width: 0%;
     height: 10px;
     border-radius: 30px;
-}
-
-#options{
-    text-align: center;
 }
 
 #options [name="Offline"]{
@@ -51,10 +48,16 @@ header{
 }
 
 button{
-
+    padding: 2vh 2vw;
+    margin: 5px;
+    font-size: inherit;
 }
 
-.choices {
+button [name="submit"]{
+    text-align: center;
+}
+
+input.choices {
     display: none;
   }
 
@@ -64,4 +67,52 @@ label{
     border-radius: 30px;
     border-style: solid;
     border-width: 1px;
+}
+
+#control{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+
+}
+
+#title{
+    text-decoration: underline;
+}
+
+.solution{
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+#control > button{
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+@media only screen and (min-width: 768px) {
+    /* Hier werden die Anpassungen für Desktops getroffen */
+    #main > * {
+        display: block;
+        justify-content: center;  
+        align-items: center; 
+    }
+
+    .solution{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body{
+        font-size: medium;
+    }
+    #control > button{
+        visibility: visible;
+        display: flex;
+        flex-direction: row;
+    }
+    
+
 }
