@@ -2,3 +2,7 @@
 Alexander Schulz - s82105@htw-dresden.de
 :toc:
 :toc-title: Inhaltsverzeichnis
+
+* Konkreter Bewertungsmaßstab wäre gut für die Orientierung
+* Konkretes Beispiel einer PWA
+* Lins zu hilfreichen Tutorials und Quellen, obwohl man sich die auch schnell selber suchen kann
