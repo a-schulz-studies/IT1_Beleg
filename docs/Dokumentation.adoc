@@ -3,3 +3,51 @@ Alexander Schulz - s82105@htw-dresden.de
 :toc:
 :toc-title: Inhaltsverzeichnis
 
+== Menüführung
+. Zuerst muss man wählen, ob man Offline spielen will
+.. Bei diesem Modus wird das lokal auf dem Webserver liegende JSON genommen, indem die Aufgaben mit entsprechenden Lösungen vorhanden sind.
+. **Offline** wählt man diesen Modus, dann erscheinen die vier Kategorien, und man kann sich entscheiden, aus welcher Kategorie man die Fragen beantworten möchte.
+. Jetzt kann man die entsprechende Lösung anklicken. Davon ist immer nur eine richtig.
+.. Die Progressbar füllt sich mit jeder beantworteten Frage.
+.. Wird die Frage richtig beantwortet, bekommt der Benutzer das Feedback über ein grünes PopUp mit dem Text "Korrekt". Wird die Frage falsch beantwortet, ist da PopUp rot und hat die Aufschrift "Falsch"
+. Hat man alle Fragen der Kategorie beantwortet, kommt man auf die Statistikseite. Hier sieht man, wie viele Fragen man bei der jeweiligen Kategorie richtig beantwortet hat und wie viele davon falsch waren.
+. Nun kann man sich entscheiden ob man wieder zu den Offline Themen springen will zum Online Teil oder die Statistik löschen möchte.
+. **Online** wählt man diesen Modus, werden die Fragen vom Server geladen. Dies kann einen Moment dauern, deshalb wird eine entsprechende Meldung angezeigt. 
+. Der Unterschied ist hierbei, dass mehrere oder auch keine Antwort richtig sein kann.
+. Man wählt hier also durch Anklicken der Antworten aus, welche richtig sein könnten. Die Antworten werden dunkel hinterlegt und der Text ist nun fett geschrieben.
+. Durch Klick auf "Weiter" wird die Antwort beim Server abgeglichen. Eine Info für kurzes Warten wird angezeigt. Danach erfolgt direkt das visuelle Feedback wie beim OfflineTeil
+
+=== Hamburger Menü
+
+Durch dieses Menü kann der Benutzer jederzeit in der App navigieren.
+Klickt man auf die drei horizontalen Balken in der linken Ecke erscheinen drei neue Buttons.
+
+* Mit Klick auf "Start" springt man nun zu der Startseite, bei der man zwischen Online und Offline auswählen konnte.
+* Mit Klick auf zurück springt man in das vorherige Menü.
+** **Beachte** man kann nicht innerhalb der Aufgaben zurückspringen.
+* Mit Klick auf Statistik kann man sich jederzeit die Statistik zu den bisher beantworteten Fragen ansehen.
+
+== Layout und Design
+=== Mobile
+* Elemente sind vertikal angeordnet, damit sind alle Elemente auf dem Bildschirm erkennbar und es gibt keine unschönen Zeilenumbrüche.
+* Hamburger Menü klappt nach unten auf
+
+=== Desktop/Tablet
+* Elemente sind Horizontal angeordnet
+* Hamburger Menu "klappt" nach rechts auf
+
+== Techniken
+* HTML
+* CSS
+* JS
+** Funktionaler Ansatz
+* Darstellung von Formeln (Mathe) durch Katex
+* Verbindung mittels fetch() zu entferntem Webserver, auf dem die Fragen liegen
+
+== Weiterentwicklung
+
+. Funktion, dass man zwischen den Fragen hin und her springen kann.
+. Auswertung mittels Diagrammen
+. Hinzufügen von Fragen durch den Benutzer
+. Fehlermeldungen, falls keien Internetverbindung besteht
+. Bessere UI und intuitivere Menüführung
