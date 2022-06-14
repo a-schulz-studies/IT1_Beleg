@@ -88,7 +88,7 @@ label{
     flex-direction: column;
 }
 #control button{
-    visibility: hidden;
+    display: none;
 }
 
 #main > .stats {
@@ -132,7 +132,7 @@ svg {
         flex-direction: row;
     }
     #control button{
-        visibility: hidden;
+        display: none;
     }
 
     #control svg{

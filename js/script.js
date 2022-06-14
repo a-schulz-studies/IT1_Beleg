@@ -498,13 +498,13 @@ function getCheckedBoxes() {
 
 function hamburgerMenu(){
   const button = document.querySelectorAll("#control > button");
-  if(button[0].style.visibility == "visible"){
+  if(button[0].style.display == "inline-block"){
     for(let i = 0; i < button.length; i++){
-      button[i].style.visibility = "hidden";
+      button[i].style.display = "none";
     }
   }else{
     for(let i = 0; i < button.length; i++){
-      button[i].style.visibility = "visible";
+      button[i].style.display = "inline-block";
     }
   }
 }
