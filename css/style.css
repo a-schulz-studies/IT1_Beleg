@@ -5,7 +5,8 @@ body{
 }
 
 #main > * {
-    display: block;
+    display: flex;
+    flex-direction: column;
     justify-content: center;  
     align-items: center; 
     font-size: inherit;
@@ -53,10 +54,6 @@ button{
     font-size: inherit;
 }
 
-button [name="submit"]{
-    text-align: center;
-}
-
 input.choices {
     display: none;
   }
@@ -71,8 +68,8 @@ label{
 
 #control{
     position: absolute;
-    right: 5px;
-    top: 5px;
+    left: 1%;
+    top: 1%;
 
 }
 
@@ -86,18 +83,40 @@ label{
     flex-direction: row;
 }
 
-#control > button{
-    visibility: hidden;
+#control{
     display: flex;
     flex-direction: column;
+}
+#control button{
+    visibility: hidden;
+}
+
+#main > .stats {
+    display: grid;
+}
+
+svg {
+    right: 3px;
+    width: 70px;
+    height: auto;
+}
+#hamburger_icon {
+    right: 3px;
+    width: 70px;
+    height: auto;
 }
 
 @media only screen and (min-width: 768px) {
     /* Hier werden die Anpassungen für Desktops getroffen */
     #main > * {
-        display: block;
+        display: flex;
+        flex-direction: row;
         justify-content: center;  
         align-items: center; 
+    }
+
+    #main button{
+        display: inline;
     }
 
     .solution{
@@ -108,11 +127,15 @@ label{
     body{
         font-size: medium;
     }
-    #control > button{
-        visibility: visible;
+    #control{
         display: flex;
         flex-direction: row;
     }
-    
+    #control button{
+        visibility: hidden;
+    }
 
+    #control svg{
+        visibility: visible;
+    }
 }
