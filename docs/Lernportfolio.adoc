@@ -1,0 +1,33 @@
+= Lernportfolio
+Alexander Schulz - s82105@htw-dresden.de
+:toc:
+:toc-title: Inhaltsverzeichnis
+
+== Entwicklungsschritte
+. Als Vorlage für das Projekt habe ich den "Prototypen" aus dem Praktikum verwendet.
+. Danach habe ich erstmal versucht die Rest-Schnittstelle mittels XMLHttpRequest zum laufen zu bekommen.
+* Die Daten sind auch angekommen, allerdings habe ich es nicht geschafft im Programm zu warten, bis die Daten vollständig übertragen wurde. Deshalb ist das Programm weitergelaufen umd im Verlauf sind Fehler aufgetreten.
+* Ich habe auch versucht mittels Promise und async await ein passives Warten einzubauen. Das hat allerdings nicht funktioniert.
+. Danach habe ich erstmal über einen functionalen Programmieransatz (functional programming) ein Grundgerüst für meine App zu erzeugt. Dies ist mir recht schnell gelungen.
+. Ein Problem worauf ich allerding im Verlauf gestoßen bin war, dass Arrays in JavaScript per Reference und nicht als Value übergeben werden. Die Fehlersuche hat mir einige Stunden gekostet, weil ich nicht verstehen konnte, weshalb sich an manchen Stellen die Arrays unbeabsichtigt veränderten. Problem war hier eine Funktion aus dem Internet, in welches ich ein Array stecke und welche mir dann ein Array in einer ungeordneten Reihenfolge zurückliefert.
+. Danach habe ich auch schon angefangen mich um das Feedback für den User zu kümmern. Die Progressbar konnte ich ziemlich schnell abschließen. Bei dem Feedback, ob die Frage richtig beantwortet wurde habe ich allerdings vorerst Probleme gehabt, weil ich die ausgewählte Lösung nicht richtig identifizieren konnte. Anfangs habe ich es über Events (event.target.name) probiert jedoch bin ich dann dazu übergegangen an die EventListener die Funktionen mit entsprechenden Parametern zu übergeben. Dadurch war es mir auch möglich andere Buttons, zum Springen an verschiedene Stellen in der App, einzubauen.
+. Danach habe ich die Anzeige der Mathe Aufgaben mittels Katex angefangen. Durch das Codebeispiel ist mir das sehr schnell gelungen. Da sieht man mal, wie gut Programmteile aus dem Internet sein können ;D.
+. Nun war es Zeit sich um die Statistikseite zu kümmmern. Ich habe mich dazu entschlossen im Programm Stück für Stück ein JSON aufzubauen, welches ich dann komfortabel auswerten kann. Das hat sich auch als sinnvoller Weg dargestellt, weil ich das gleiche JSON auch für die Auswertung der OnlineAufgaben verwenden konnte.
+. Jetzt war es wieder Zeit sich um die Rest-Schnittstelle zu kümmern. Hierbei habe ich dann die Schnittstelle fetch genommen, welche auch nativ in JavaScript vorhanden ist. Mit dieser hat das warten auch recht gut funktioniert, weil ich im zurückgelieferten Promise dann eine weitere Funktion aufrufen konnte.
+. Nun ist es aber so, dass die Antworten vom Server ja nicht wirklich direkt da sind. Deshalb habe ich das UserFeedback verfeinert und entsprechende Texte an den Stellen anzeigen lassen, wenn auf die Antwort des Servers gewartet wird.
+. Für die Auswahl der Antworten musste ich hier auch einen neuen Ansatz wählen, weil ja mehrere Antworten ausgewählt werden können. Entschlossen habe ich mich für Checkboxen, welche ich dann noch entsprechend mit css gestylt habe.
+. Schlussendlich habe ich noch die Anpassungen für die PWA vorgenommen. Das stellte ich anfangs entwas schwieriger als gedacht heraus, weil man keine wirklich hilfreichen Fehlermeldungen bekommen hat. Probleme hat mein manifest.json gemacht, welches nicht richtig konfiguriert war.
+. Schlussendlich habe ich noch das Design angepasst. Und Anpassungen für ein ResponsivesDesign vorgenommen. Beispielsweise sind die Buttons aus dem Handy untereinander und beim Querbild nebeneinander.
+. Verfeinert habe ich das ganze noch durch ein Hamburger Menu hinter dem sich spezielle Buttons und Sprungstellen verstecken.
+
+== Lernfortschritte
+* Ich habe jetzt erst gelernt, wie man wirklich mit JavaScript umgehen kann und was mit dieser doch sehr einfachen Programmiersprache alles möglich ist. Demnächst werde ich mal einen Objektorientierten Ansatz versuchen.
+* Das Prinzip einer PWA war mir vorher noch nicht wirklich klar, aber damit lässt sich ja wirklich viel machen. Gerade das Caching und die Möglichkeit die Funktionen des Handys nutzen zu können macht es sicherlich zu einer Technik, die in Zukunft noch mehr Verwendung finden wird.
+* Ich habe mich ein wenig davor gedrückt viel HTML zu schreiben, weil ich es komfortabler fand das DOM mittels JS zu manipulieren.
+* Gesamt bin ich mir sicher, dass ich durch das Anwenden der, für mich neuen doch neuen Technologien, einiges lernen konnte und auch verstehe, was hinter den doch mittlerweile komplexen Websiten heutzutage steht.
+
+== Misserfolge
+. Umsetzung eines Wartens mittels XMLHTTPRequest
+. Anfangs: Identifikation von Elementen
+. Gut strukturierten Code zu schreiben. Der Code ist wirklich sehr schnell sehr unübersichtlich geworden
+. Vieles, was ich mit CSS umsetzten wollte hat nicht direkt auf Anhieb so funktioniert wie ich wollte. Hier ist mir noch nicht ganz ersichtlich, wann StylingAttribute vererbt werden und was man diese überschreiben kann.
